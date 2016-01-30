@@ -7,6 +7,7 @@ ARTJamCharacter::ARTJamCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ARTJamCharacter::OnHit);
 
 	// Don't rotate when the controller rotates.
 	bUseControllerRotationPitch = false;
@@ -54,7 +55,11 @@ void ARTJamCharacter::Tick(float DeltaSeconds)
 
 	if (!IsDead())
 	{
-		
+		EnableInput(GetWorld()->GetFirstPlayerController());
+	}
+	else
+	{
+		DisableInput(GetWorld()->GetFirstPlayerController());
 	}
 
 }
@@ -69,6 +74,11 @@ void ARTJamCharacter::MoveRight(float Value)
 {
 	// add movement in that direction
 	AddMovementInput(FVector(0.f,-1.f,0.f), Value);
+}
+
+void ARTJamCharacter::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	bIsDead = true;
 }
 
 void ARTJamCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)

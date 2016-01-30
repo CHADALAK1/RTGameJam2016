@@ -48,10 +48,14 @@ private:
 public:
 	ARTJamCharacter();
 
+	UFUNCTION()
+	void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 	/** Returns SideViewCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns bIsDead boolean*/
-	FORCEINLINE bool IsDead() const { return bIsDead; }
+	/** Returns bIsDead boolean(Callable throught BP for Level BP*/
+	UFUNCTION(BlueprintCallable, Category = Dead)
+	bool IsDead() const { return bIsDead; }
 };
