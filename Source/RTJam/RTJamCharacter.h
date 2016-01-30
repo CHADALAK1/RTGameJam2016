@@ -35,9 +35,13 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	/**Overriding jump to add more jumps.
+	TODO: Add cooldown for every jump*/
+	virtual void Jump() override;
+
 private:
 
-	/** checks to see if the Character is dead*/
+	/** checks to see if the Character is dead(Essentially when Character hits the ground)*/
 	bool bIsDead;
 
 
