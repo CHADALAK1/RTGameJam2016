@@ -16,6 +16,16 @@ class ARTJamCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
+public:
+
+	/*Force to Add in Direction of Character*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Physics")
+		FVector ForceLength;
+
+	/*Absolute World Max Height*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Limits")
+		float MaxHeight;
+
 protected:
 
 	/** Called for side to side input */
@@ -58,4 +68,7 @@ public:
 	/** Returns bIsDead boolean(Callable throught BP for Level BP*/
 	UFUNCTION(BlueprintCallable, Category = Dead)
 	bool IsDead() const { return bIsDead; }
+
+	//used to help limit force strength based on altitude of the character
+	FORCEINLINE static float LerpFloat(const float A, const float B, const float Alpha){ return A + Alpha*(B - A); };
 };

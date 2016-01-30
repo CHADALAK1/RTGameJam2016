@@ -68,7 +68,14 @@ void ARTJamCharacter::Tick(float DeltaSeconds)
 void ARTJamCharacter::Jump()
 {
 	Super::Jump();
-	this->LaunchCharacter(FVector(0, 0, 1000), false, true);
+
+	//compute force length by limiting max height to avoid player going off screen
+	float LV_LevelHeight = 1650.f;
+	float LV_CharacterHeight = Mesh->GetComponentLocation().Z;
+
+	float LV_ForceStrength = LerpFloat(0.f, ForceLength.Size(), 1.f - ((LV_CharacterHeight - LV_LevelHeight) / MaxHeight));
+
+	this->LaunchCharacter(ForceLength.GetSafeNormal() * LV_ForceStrength, false, true);
 }
 
 void ARTJamCharacter::MoveRight(float Value)
