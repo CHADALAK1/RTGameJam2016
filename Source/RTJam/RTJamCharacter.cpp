@@ -60,6 +60,7 @@ void ARTJamCharacter::Tick(float DeltaSeconds)
 	else
 	{
 		DisableInput(GetWorld()->GetFirstPlayerController());
+		UGameplayStatics::OpenLevel(GetWorld(),TEXT("GameOver_Screen"));
 	}
 
 }
