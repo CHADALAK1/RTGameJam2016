@@ -3,6 +3,9 @@
 #include "RTJam.h"
 #include "PickupBase.h"
 
+//used for casting purposes
+#include "RTJamCharacter.h"
+
 
 // Sets default values
 APickupBase::APickupBase()
@@ -12,6 +15,8 @@ APickupBase::APickupBase()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
 	RootComponent = Mesh;
+
+
 }
 
 // Called when the game starts or when spawned
