@@ -30,8 +30,8 @@ ARTJamCharacter::ARTJamCharacter()
 
 	bIsDead = false;
 
-	NormalImpulse = 300.f;
-	MaxImpulse = 600.f;
+	NormalImpulse = 800.f;
+	MaxImpulse = 1000.f;
 	ForceLength.Z = NormalImpulse;
 }
 

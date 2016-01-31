@@ -16,6 +16,9 @@ APickupBase::APickupBase()
 	Mesh->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	RootComponent = Mesh;
 
+	Aura = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Aura"));
+	Aura->AttachTo(RootComponent);
+
 
 }
 
@@ -29,6 +32,8 @@ void APickupBase::BeginPlay()
 void APickupBase::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	this->SetActorRelativeRotation(FRotator(this->GetActorRotation().Pitch, this->GetActorRotation().Yaw + 1, this->GetActorRotation().Roll));
 
 }
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "ParticleDefinitions.h"
 #include "PickupBase.generated.h"
 
 UCLASS()
@@ -12,6 +13,9 @@ class RTJAM_API APickupBase : public AActor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditDefaultsOnly, Category = Particle)
+	class UParticleSystemComponent *Aura;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -28,6 +32,8 @@ public:
 
 	/**Returns Mesh Subobject*/
 	FORCEINLINE UStaticMeshComponent *GetMesh() const { return Mesh; }
+	/** Returns Aura Subobject**/
+	FORCEINLINE UParticleSystemComponent *GetAura() const { return Aura; }
 
 	
 };
