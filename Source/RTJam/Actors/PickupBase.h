@@ -9,6 +9,9 @@ UCLASS()
 class RTJAM_API APickupBase : public AActor
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* Mesh;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -20,11 +23,11 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-		UStaticMeshComponent* Mesh;
-
 	UFUNCTION()
 	virtual void OnPickupOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+
+	/**Returns Mesh Subobject*/
+	FORCEINLINE UStaticMeshComponent *GetMesh() const { return Mesh; }
 
 	
 };

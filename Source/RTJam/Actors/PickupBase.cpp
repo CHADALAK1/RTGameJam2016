@@ -3,8 +3,6 @@
 #include "RTJam.h"
 #include "PickupBase.h"
 
-//used for casting purposes
-#include "RTJamCharacter.h"
 
 
 // Sets default values
@@ -14,6 +12,8 @@ APickupBase::APickupBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
+	Mesh->OnComponentBeginOverlap.AddDynamic(this, &APickupBase::OnPickupOverlap);
+	Mesh->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	RootComponent = Mesh;
 
 
@@ -23,8 +23,6 @@ APickupBase::APickupBase()
 void APickupBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Mesh->OnComponentBeginOverlap.AddDynamic(this, &APickupBase::OnPickupOverlap);
 }
 
 // Called every frame

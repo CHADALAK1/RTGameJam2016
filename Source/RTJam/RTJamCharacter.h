@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Limits")
 		float MaxHeight;
 
+	float NormalImpulse;
+	float MaxImpulse;
+
 protected:
 
 	/** Called for side to side input */
@@ -53,13 +56,30 @@ private:
 
 	/** checks to see if the Character is dead(Essentially when Character hits the ground)*/
 	bool bIsDead;
+	
+	/**checks to see if the Character is Invincible*/
+	bool bIsInvincible;
+
+	/** Timer Handle for Delay of death**/
+	FTimerHandle DeathHandle;
+	FTimerHandle GravityHandle;
+	FTimerHandle InvincibilityHandle;
 
 
 public:
 	ARTJamCharacter();
 
+	/** Hit function to check if actors hit this Character(For Death)**/
 	UFUNCTION()
 	void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	/**//////////////////////////Timer Functions for Abilities, Death, etc \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\**/
+	void GravityTimer();
+	void GravityEnd();
+	void DeathTimer();
+	void InvincibilityTimer();
+	void InvincibilityEnd();
+	/**/////////////////////////Timer Functions End \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\**/
 
 	/** Returns SideViewCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
@@ -68,7 +88,11 @@ public:
 	/** Returns bIsDead boolean(Callable throught BP for Level BP*/
 	UFUNCTION(BlueprintCallable, Category = Dead)
 	bool IsDead() const { return bIsDead; }
-
-	//used to help limit force strength based on altitude of the character
+	/** Returns bIsInvincible boolean (Callable through BP for Level BP**/
+	UFUNCTION(BlueprintCallable, Category = Invincible)
+	void SetIsInvincible(bool Set) { bIsInvincible = Set; }
+	/** Returns bIsInvincible boolean**/
+	FORCEINLINE bool IsInvincible() const { return bIsInvincible; }
+	/**used to help limit force strength based on altitude of the character**/
 	FORCEINLINE static float LerpFloat(const float A, const float B, const float Alpha){ return A + Alpha*(B - A); };
 };

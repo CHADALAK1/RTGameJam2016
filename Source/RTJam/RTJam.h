@@ -4,5 +4,7 @@
 #define __RTJAM_H__
 
 #include "Engine.h"
+//Making public accessor to all events 
+#include "RTJamCharacter.h"
 				   
 #endif

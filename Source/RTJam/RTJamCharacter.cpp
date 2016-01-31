@@ -1,6 +1,7 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 
 #include "RTJam.h"
+#include "Actors/PickupBase.h"
 #include "RTJamCharacter.h"
 
 ARTJamCharacter::ARTJamCharacter()
@@ -28,6 +29,10 @@ ARTJamCharacter::ARTJamCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
 	bIsDead = false;
+
+	NormalImpulse = 600.f;
+	MaxImpulse = 1200.f;
+	ForceLength.Z = NormalImpulse;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,14 +58,13 @@ void ARTJamCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!IsDead())
+	if (IsInvincible())
 	{
-		EnableInput(GetWorld()->GetFirstPlayerController());
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	}
 	else
 	{
-		DisableInput(GetWorld()->GetFirstPlayerController());
-		UGameplayStatics::OpenLevel(GetWorld(),TEXT("GameOver_Screen"));
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	}
 
 }
@@ -71,11 +75,45 @@ void ARTJamCharacter::Jump()
 
 	//compute force length by limiting max height to avoid player going off screen
 	float LV_LevelHeight = 1650.f;
-	float LV_CharacterHeight = Mesh->GetComponentLocation().Z;
+	float LV_CharacterHeight = GetMesh()->GetComponentLocation().Z;
 
 	float LV_ForceStrength = LerpFloat(0.f, ForceLength.Size(), 1.f - ((LV_CharacterHeight - LV_LevelHeight) / MaxHeight));
 
 	this->LaunchCharacter(ForceLength.GetSafeNormal() * LV_ForceStrength, false, true);
+}
+
+void ARTJamCharacter::GravityTimer()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "GravityBoosted");
+	ForceLength.Z = MaxImpulse;
+	GetWorldTimerManager().SetTimer(GravityHandle, this, &ARTJamCharacter::GravityEnd, 3.f, false);
+}
+
+void ARTJamCharacter::GravityEnd()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "GravityNormal");
+	ForceLength.Z = NormalImpulse;
+	GetWorldTimerManager().ClearTimer(GravityHandle);
+}
+
+void ARTJamCharacter::DeathTimer()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("GameOver_Screen"));
+	GetWorldTimerManager().ClearTimer(DeathHandle);
+}
+
+void ARTJamCharacter::InvincibilityTimer()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Invincible");
+	bIsInvincible = true;
+	GetWorldTimerManager().SetTimer(InvincibilityHandle, this, &ARTJamCharacter::InvincibilityEnd, 2.f, false);
+}
+
+void ARTJamCharacter::InvincibilityEnd()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "NotInvincible");
+	bIsInvincible = false;
+	GetWorldTimerManager().ClearTimer(InvincibilityHandle);
 }
 
 void ARTJamCharacter::MoveRight(float Value)
@@ -86,7 +124,13 @@ void ARTJamCharacter::MoveRight(float Value)
 
 void ARTJamCharacter::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	bIsDead = true;
+	APickupBase *Item = Cast<APickupBase>(OtherActor);
+	if (!Item)
+	{
+		bIsDead = true;
+		DisableInput(GetWorld()->GetFirstPlayerController());
+		GetWorldTimerManager().SetTimer(DeathHandle, this, &ARTJamCharacter::DeathTimer, 2.f, false);
+	}
 }
 
 void ARTJamCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
