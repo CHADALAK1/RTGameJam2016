@@ -74,7 +74,7 @@ void ARTJamCharacter::Jump()
 	Super::Jump();
 
 	//compute force length by limiting max height to avoid player going off screen
-	float LV_LevelHeight = 1850.f;
+	float LV_LevelHeight = 3000.f;
 	float LV_CharacterHeight = GetMesh()->GetComponentLocation().Z;
 
 	float LV_ForceStrength = LerpFloat(0.f, ForceLength.Size(), 1.f - ((LV_CharacterHeight - LV_LevelHeight) / MaxHeight));
